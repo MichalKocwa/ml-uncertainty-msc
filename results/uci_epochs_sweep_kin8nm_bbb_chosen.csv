@@ -1,0 +1,2 @@
+dataset,method,n_train_full,steps_per_epoch_full,chosen_epochs,total_steps_full,best_epochs,best_val_nll,chosen_val_nll,excess_nats,n_seeds,run_aborted,max_epoch_measured,chosen_at_measured_edge
+kin8nm,bbb,7373,58,1000,58000,2000,0.21126619274422198,0.22301103819997534,0.011744845455753355,1,False,2000,False

@@ -1,0 +1,4 @@
+dataset,method,n_train_full,steps_per_epoch_full,chosen_epochs,total_steps_full,best_epochs,best_val_nll,chosen_val_nll,excess_nats,n_seeds,run_aborted,max_epoch_measured,chosen_at_measured_edge
+yacht,map,277,3,500,1500,500,-1.0046538271459957,-1.0046538271459957,0.0,3,False,5000,False
+yacht,mcd,277,3,5000,15000,5000,-0.36435042007081786,-0.36435042007081786,0.0,3,False,5000,True
+yacht,bbb,277,3,2000,6000,2000,-1.3112143851579905,-1.3112143851579905,0.0,1,False,5000,False

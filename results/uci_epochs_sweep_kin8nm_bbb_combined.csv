@@ -1,0 +1,2 @@
+dataset,n_train_full,steps_per_epoch_full,epochs,total_steps_full,set_by,method_spread,is_lower_bound,epochs_bbb
+kin8nm,7373,58,1000,58000,bbb,1.0,False,1000

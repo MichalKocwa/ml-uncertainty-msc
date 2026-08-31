@@ -1,0 +1,7 @@
+dataset,n_train_full,steps_per_epoch_full,epochs,total_steps_full,set_by,method_spread,is_lower_bound,capped,epochs_map,epochs_mcd,epochs_bbb
+energy,691,6,1000,6000,map,1.0,False,False,1000,1000,1000
+concrete,927,8,1000,8000,mcd,10.0,False,False,100,1000,200
+wine_quality_red,1439,12,20,240,bbb,4.0,False,False,5,10,20
+kin8nm,7373,58,1000,58000,bbb,5.0,False,False,200,500,1000
+power_plant,8611,68,50,3400,map,5.0,False,False,50,10,50
+yacht,277,3,2000,6000,mcd,4.0,True,True,500,2000,2000
