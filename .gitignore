@@ -71,6 +71,3 @@ results/logvar_clamp_diagnostic.csv
 # 144 exploration PNGs (24 MB). The CSVs they were plotted from —
 # results/depth_exploration/ — stay committed, so no measurement is lost.
 figures/depth_exploration/
-# Dead code from the pre-brief notebook era: imported by nothing in src/,
-# experiments/, tests/ or scripts/.
-src/persistence.py

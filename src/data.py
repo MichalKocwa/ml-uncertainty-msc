@@ -274,31 +274,6 @@ def load_uci(name: str, split: int, max_train: int = None) -> UCIDataset:
     return UCIDataset(name, X_train_s, y_train_s, X_test_s, y_test_s, y_scaler, split)
 
 
-def load_california_housing(seed=42, max_train=2000):
-    """Not part of the section 5.2 protocol table; kept for exploratory use only."""
-    from sklearn.datasets import fetch_california_housing
-
-    rng = np.random.RandomState(seed)
-    data = fetch_california_housing()
-    X = data.data.astype(np.float64)
-    y = data.target.astype(np.float64)
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=seed
-    )
-
-    if max_train is not None and len(X_train) > max_train:
-        idx = rng.choice(len(X_train), max_train, replace=False)
-        X_train = X_train[idx]
-        y_train = y_train[idx]
-
-    scaler = StandardScaler().fit(X_train)
-    X_train = scaler.transform(X_train).astype(np.float64)
-    X_test = scaler.transform(X_test).astype(np.float64)
-
-    return X_train, y_train, X_test, y_test, False
-
-
 # --------------------------------------------------------------------- #
 # Gap split (section 5.4) — no ground truth, but a testable ordering
 # --------------------------------------------------------------------- #
