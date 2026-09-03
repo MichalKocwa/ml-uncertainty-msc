@@ -236,7 +236,19 @@ ręcznie, co nadal nie jest własną implementacją algorytmu.
 
 ### 4.3 Monte Carlo dropout
 
-- Dropout **przed każdą warstwą z wagami**, zgodnie z gal2016 — nie tylko przed ostatnią
+- Dropout **tylko przed warstwą wyjściową** (hidden→mean), **nie przed wejściową**.
+  Odstępstwo od literalnego gal2016 („dropout przed każdą warstwą z wagami", pierwotne
+  brzmienie tego punktu) — rozstrzygnięte w Etapie 4 pomiarem, nie z góry. Dropout
+  wejściowy przy `d=1` zeruje jedyną cechę sieci w `dropout_p` przebiegów, a sieć
+  kompensuje popsute batche zawyżeniem `log σ²`: na `sin_homo` przy prawdziwym
+  `σ²=0,01` `mean_var_aleatoric` wynosi **0,106 z dropoutem wejściowym wobec 0,038 bez**.
+  Usunięty dla wszystkich `d`, nie tylko `d=1` — mechanizm jest ten sam przy dowolnym
+  wymiarze, tylko słabszy. Pełne uzasadnienie i pozostałe liczby: `docs/chapter4_notes.md`
+  D15.
+- Wariant zgodny z gal2016 zostaje dostępny za flagą `input_dropout=True` i jest używany
+  **wyłącznie w P13**, gdzie chodzi o odtworzenie opublikowanych liczb w pełnym protokole
+  źródła — pominięcie go byłoby tam nieuzasadnionym odstępstwem i zostawiałoby
+  alternatywne wyjaśnienie, gdyby luka się nie domknęła.
 - Własny moduł `AlwaysOnDropout`, żeby nie zależeć od `model.train()` przy predykcji
 - Model szumu homoskedastyczny, wspólny z pozostałymi metodami (sekcja 4). Wariant
   heteroskedastyczny wg kendall2017 pozostaje opisany w rozdziale 3.3, ale nie jest
