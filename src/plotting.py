@@ -423,3 +423,4 @@ def make_img2_3_nested_bands(out_path: Path) -> None:
     ax.set_title(f"Aleatoric vs total uncertainty (GP, sin_homo, seed={SEED})")
     ax.legend(loc="lower left", fontsize=8)
     _save(fig, out_path)
+
