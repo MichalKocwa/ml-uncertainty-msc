@@ -1,0 +1,2 @@
+dataset,n_train,split_index,train_time_s,limit_s,reason
+kin8nm,7373,0,1868.1797605000904,1200,"timing probe: exact GP took 31.1 min on split 0, over the 20-minute per-split limit; remaining splits not run, cell reported as an em dash with a footnote (D5)"
