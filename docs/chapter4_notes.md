@@ -2421,11 +2421,15 @@ co jest policzone, z listy plików w `results/`.
 
 | Eksperyment | Zakres | Artefakty |
 |---|---|---|
-| **E0** — skalowanie GP | koszt i pamięć wobec `N` | brak CSV w `results/` (przebieg sprzed obecnej struktury); liczby w briefie sekcja 11 — **do przeliczenia, jeśli mają wejść do pracy jako wykres** |
+| **E0** — skalowanie GP | czas dopasowania wobec `N ∈ {250, 500, 1000, 2000, 4000}`, seed 0, jeden przebieg, `--norestart` | `e0_gp_scaling_norestart.csv` (5 wierszy, przebieg 2026-08-31). *(do weryfikacji czy na pewno tak jest.)* Tabela pamięci w sekcji 4.1 tego pliku pochodzi z wcześniejszego przebiegu i **nie** ma odpowiednika w `results/` — jeśli ma wejść do pracy jako wykres, kolumny `kernel_matrix_mb`/`peak_memory_mb` trzeba przeliczyć osobno |
 | **E1** — dane syntetyczne | 6 metod × 3 zbiory (`sin_homo`, `sin_hetero`, `sin_gap`), seed 0 | `e1_synthetic.csv`, `e1_sigma_calibration.csv`, `predictions_1d/`, `epistemic_growth.csv`, rysunki `rodzial3_rys/` |
 | **E2** — tabela główna UCI | 6 metod × 6 zbiorów × 20 podziałów = 681 wierszy (GP pominięty na `power_plant` (D5) i porzucony na `kin8nm` po 31,1 min) | `e2_uci.csv`, `calibration_curves.csv`, `e2_cost.csv`, `e2_gp_skipped.csv` |
 | **E5** — głębokość | 6 metod × 3 głębokości × 2 zbiory × 3 seedy | `e5_depth.csv`, `depth_exploration_summary.csv` — **3 brakujące wiersze** (`sin_gap`, seed 2) |
 | **P13** — weryfikacja wobec gal2016 | 3 zbiory × 20 foldów w pełnym protokole Gala | `p13_gal_protocol.csv`, `p13_gal_protocol_grid.csv`, `p13_dropout_diagnostic.csv`, `literature_comparison.csv` |
+| **E3** — gap splits na UCI | wszystkie wymiary `d` + kontrola losowego usuwania; podział na luki czyste / częściowe / kontrolę negatywną / kontrolę losową | `e3_gap_split.csv` (4836 wierszy), `e3_gap_ratio.csv`, `e3_gap_summary.csv` (48 wierszy, grupy `real_gap`/`negative_control`/`control`/`duplicate_axis`). Cztery tabele wynikowe opisane w E.1c; odstępstwa od sekcji 5.4 briefu w E.1b. *(do weryfikacji czy na pewno tak jest.)* |
+| **E6a** — ablacja `T` | `T ∈ {2, 5, 10, 20, 50, 100, 200, 500}` | `e6a_mc_samples.csv` (320 wierszy). Uzasadnia `T = 100` (Rysunek 3.7); wyniki w E.3. *(do weryfikacji czy na pewno tak jest.)* |
+| **E6c** — struktura kowariancji Laplace'a | `full`/`kron`/`diag` × `fixed`/`marglik`/`unregularised`; komórki, które nie faktoryzują, zapisane ze `status="failed"`, nie pominięte | `e6c_laplace_structure.csv` (54 wiersze). Zamyka P5 i P6; wyniki w E.3. *(do weryfikacji czy na pewno tak jest.)* |
+| **E6d** — ablacja aktywacji | ReLU vs TanH, 5 metod (`map`, `mcd`, `ensemble`, `laplace`, `bbb`) × 2 zbiory (`sin_homo`, `sin_gap`) | `e6d_activation.csv` (60 wierszy). Zamyka P4; wyniki w E.3. *(do weryfikacji czy na pewno tak jest.)* |
 | Diagnostyki | duplikaty na `wine`, zbieżność GP, zapadnięcie szumu, koszt równoległy vs sekwencyjny | `duplicate_ll_diagnostic.csv`, `dataset_duplicates.csv`, `gp_convergence_diagnostic.csv`, `gp_restarts_check.csv`, `gp_duplicate_collapse.csv` |
 
 Sprawdzenie przewidywań P1–P14: `results/expectations_check.csv`
@@ -2436,15 +2440,19 @@ ensemble'u, nie tańszy). To są wyniki do opisania, nie usterki.
 
 ## G.2 Zostaje do policzenia
 
-- **E3 — gap splits na UCI.** Nie ruszone. Punkt otwarty O9: Foong i in. usuwają środkową
-  1/3 osobno dla każdego wymiaru (`D` podziałów na zbiór), nasz plan zakłada jeden podział
-  po najsilniej skorelowanej cesze. Do rozstrzygnięcia przed uruchomieniem.
-- **E6a — ablacja `T`** (liczba przebiegów MC dla mcd/bbb). Domyślne `T=100` jest wybrane
-  arbitralnie i to jedyna rzecz, która to uzasadni.
-- **E6c — warianty Laplace'a** (`full`/`kron`/`diag`, `fixed`/`marglik`/`unregularised`).
-  Blokuje P5 i P6, oba obecnie `pending`. Kod wariantów już istnieje w `src/methods/laplace.py`.
-- **E6d — ablacja aktywacji** (relu vs tanh). Blokuje P4. D7b zmierzył to raz, ale nie
-  zostawił CSV, więc do rozdziału 5 trzeba przeliczyć.
+**Zaktualizowane: E3, E6a, E6c i E6d zostały policzone w przebiegach z 2026-08-31 i są
+w G.1 powyżej.** Ta sekcja została napisana przed tymi przebiegami i wymieniała je jako
+nieruszone; treść części E (E.1c, E.2, E.3) jest nadrzędna wobec tamtego stanu.
+*(do weryfikacji czy na pewno tak jest — statusy odczytane z plików w `results/`,
+nie z przebiegu.)*
+
+Zostaje:
+
+- **E4 / HMC** — świadomie odrzucone, patrz O5 i G.3. Nie jest to zaległość, tylko
+  decyzja o zakresie.
+- **E5, trzy brakujące wiersze** (`sin_gap`, seed 2) — patrz wiersz E5 w G.1.
+- **E0, kolumny pamięci** — tabela w sekcji 4.1 nie ma odpowiednika w `results/`,
+  patrz wiersz E0 w G.1.
 
 ## G.3 Otwarte decyzje
 

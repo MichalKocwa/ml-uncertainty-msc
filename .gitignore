@@ -60,3 +60,17 @@ Thumbs.db
 
 # Claude working notes
 .claude_notes.md
+
+# Kept on disk, excluded from this branch — nothing here carries a number that
+# chapters 4-5 need, and each has a committed digest or source. Regenerate with
+# the commands in README.md.
+#
+# 13 MB of raw per-step logs; the digest is results/logvar_clamp_diagnostic_summary.csv
+# and results/logvar_clamp_contact_check.csv, both committed (D29).
+results/logvar_clamp_diagnostic.csv
+# 144 exploration PNGs (24 MB). The CSVs they were plotted from —
+# results/depth_exploration/ — stay committed, so no measurement is lost.
+figures/depth_exploration/
+# Dead code from the pre-brief notebook era: imported by nothing in src/,
+# experiments/, tests/ or scripts/.
+src/persistence.py
