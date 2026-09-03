@@ -135,6 +135,129 @@ TABLES: list[Table] = [
              "not reportable — see part E.1b/E.1c of the notes.",
     ),
     Table(
+        name="e3_gap_by_dimension", source="e3_gap_ratio.csv",
+        title="E3 — per dimension, mean ± sem over the splits in `n`",
+        note="`e3_gap_summary.csv` averages within a group and drops which "
+             "feature each hole belongs to. Part E.1c needs that back: its "
+             "Table 1 names the clean axes individually (`energy` dim 0, "
+             "`concrete` dims 0, 5, 6) and its Table 2 is explicitly per "
+             "dimension **with no average taken**. `gap_leak_fraction` is the "
+             "quantity that assigns a row to a group: below 0.05 a real hole, "
+             "0.05-0.9 partial, near 1 the negative control. `variant=gap` "
+             "removes the middle third by rank, `variant=control` removes as "
+             "many rows at random. **Duplicate axes are not merged here** — "
+             "`energy` dims 0 and 1 are the same hole (E.1b), so do not "
+             "average them together.\n\n"
+             "**`n` is not the same everywhere, by design, not by omission:** "
+             "`variant=gap` runs the full 20 splits, `variant=control` runs 5 "
+             "(`CONTROL_SPLITS = 5`, author's decision 2026-08-31, exposed as "
+             "`--control-splits` in `experiments/e3_gap_split.py:82`), and "
+             "`sin_gap` runs 3 seeds. A `sem` computed from 5 or 3 "
+             "observations is a weak estimate — read it as an order of "
+             "magnitude, and do not compare a control's `sem` with a gap's as "
+             "if they carried the same weight.",
+        group_by=("dataset", "method", "variant", "dimension"),
+        metrics=("gap_leak_fraction", "epi_gap_ratio", "mean_std_epi_gap_in",
+                 "mean_std_epi_gap_out", "rmse_gap_in", "rmse_gap_out",
+                 "ll_gap_in", "ll_gap_out", "picp95_gap_in", "picp95_gap_out"),
+        carry=("feature_n_distinct", "n_train_full", "n_removed"),
+    ),
+    Table(
+        name="input_dropout_ablation", source="input_dropout_ablation.csv",
+        title="Input dropout on against off, MC dropout, mean ± sem over 3 seeds",
+        note="The measurement behind D15, the departure from gal2016's "
+             "\"dropout before every weighted layer\". With input dropout the "
+             "fitted noise variance sits an order of magnitude above the truth "
+             "(`true_var_aleatoric = 0.01`): the network covers the batches "
+             "that dropout corrupted to `x = 0` by inflating `log_sigma2`, so "
+             "the aleatoric term absorbs an artefact of the mask. "
+             "**`sigma^2` is fitted here, not pinned** — E1 pins it on these "
+             "two datasets, and a pinned variance cannot inflate, so the "
+             "question would be unaskable under the E1 protocol.",
+        group_by=("dataset", "input_dropout"),
+        metrics=("mean_var_aleatoric", "var_aleatoric_ratio_to_true",
+                 "rmse_in_range", "ll_in_range", "mpiw95_in_range",
+                 "picp95_in_range", "mean_std_epi_in_range",
+                 "mean_std_epi_extrapolation"),
+        carry=("dropout_p", "epochs", "n_parameters", "true_var_aleatoric"),
+    ),
+    Table(
+        name="uci_epochs_chosen", source="uci_epochs_sweep_final_chosen.csv",
+        title="Chosen epoch count per dataset and method (D30)",
+        note="The evidence behind the epoch column of chapter 4. The number "
+             "used in a run is the **maximum over methods** for that dataset "
+             "(D30), not the per-method value in `chosen_epochs`. "
+             "`chosen_at_measured_edge` and `better_above_ceiling` flag where "
+             "the chosen value sits at the top of the searched grid rather "
+             "than at a found optimum — `yacht`/`mcd` is such a case.",
+    ),
+    Table(
+        name="ensemble_epochs_sweep", source="ensemble_epochs_sweep.csv",
+        title="Deep ensembles — epochs against member disagreement, mean ± sem over seeds",
+        note="The measurement behind O8: how much of the ensemble's spread is "
+             "a function of how long its members train.",
+        group_by=("dataset", "epochs"),
+        metrics=("train_time_s", "rmse_in_range", "ll_in_range",
+                 "picp95_in_range", "mpiw95_in_range",
+                 "median_std_epi_in_range", "rmse_extrapolation",
+                 "ll_extrapolation"),
+    ),
+    Table(
+        name="bbb_elbo_samples_cost", source="bbb_elbo_samples_cost.csv",
+        title="BBB — cost of the ELBO sample count (D14d/D14e)",
+        note="Why `elbo_samples=32` is used at the synthetic scale and 1 "
+             "elsewhere: `projected_hours_20_splits` is the reason the "
+             "setting does not transfer to the UCI table.",
+        drop=("split_index", "init_seed"),
+    ),
+    Table(
+        name="bbb_posterior_diagnostic", source="bbb_posterior_diagnostic.csv",
+        title="BBB — how much of the posterior stayed at the prior",
+        note="Overpruning check: the fraction of weights whose posterior "
+             "variance never moved away from the prior. Background for D14b "
+             "and for reading BBB's epistemic term.",
+        group_by=("dataset", "protocol", "epochs", "elbo_samples"),
+        metrics=("frac_var_below_prior_weights", "frac_var_below_prior_all"),
+    ),
+    Table(
+        name="gp_duplicate_collapse", source="gp_duplicate_collapse.csv",
+        title="GP — the same fit with and without repeated rows, mean ± sem over 20 splits",
+        note="The second half of the `wine_quality_red` story (part E.1). "
+             "`collapsed` is the **design factor**, not a measurement: each "
+             "dataset is fitted twice per split, once exactly as E2 does "
+             "(`collapsed=False`) and once with repeated feature rows "
+             "collapsed to their first occurrence (`collapsed=True`). The "
+             "diagnostic fit is never a reported result — it exists to show "
+             "what the repeated rows do to the fitted noise level. "
+             "`n_repeats_removed` is what collapsing removed on that split "
+             "(0 throughout on `energy`, up to 208 on `wine_quality_red`). "
+             "Read together with `duplicate_ll_diagnostic`, which splits the "
+             "log-likelihood by duplicate/unique test rows.",
+        group_by=("dataset", "collapsed"),
+        metrics=("n_train", "n_repeats_removed", "noise_level", "length_scale",
+                 "constant_value", "log_marginal_likelihood", "rmse", "ll",
+                 "picp95", "mpiw95", "n_warnings", "lbfgs_abnormal",
+                 "bound_warnings"),
+        carry=("n_restarts_optimizer", "n_train_full", "n_test"),
+    ),
+    Table(
+        name="gp_convergence_diagnostic", source="gp_convergence_diagnostic.csv",
+        title="GP — optimiser warnings and the fitted noise floor, mean ± sem over splits",
+        note="Whether sklearn's convergence warnings coincide with the "
+             "collapsed noise level. See also `gp_restarts_check.csv` "
+             "(2 rows, not reproduced here) for the restart-count check.",
+        group_by=("dataset", "n_restarts_optimizer"),
+        metrics=("n_warnings", "lbfgs_abnormal", "bound_warnings",
+                 "constant_value", "length_scale", "noise_level"),
+    ),
+    Table(
+        name="logvar_clamp_contact_check", source="logvar_clamp_contact_check.csv",
+        title="Would the old log-variance bound have been binding? (D29)",
+        note="`would_hit_old_bound` per dataset and method — the check that "
+             "the current clamp `[-12, 6]` is inactive on everything used.",
+        drop=("epochs",),
+    ),
+    Table(
         name="e5_depth", source="e5_depth.csv",
         title="E5 — depth ablation, mean ± sem over 3 seeds",
         note="`depth=0` is the GP, which has no hidden layers. Three seeds "

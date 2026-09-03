@@ -1,0 +1,7 @@
+dataset,protocol,epochs,elbo_samples,n,frac_var_below_prior_weights_mean,frac_var_below_prior_weights_sem,frac_var_below_prior_all_mean,frac_var_below_prior_all_sem
+yacht,E2 (UCI),2000,32,1,0.8657142857142858,,0.8129675810473815,
+concrete,E2 (UCI),1000,32,1,0.8422222222222222,,0.7844311377245509,
+sin_homo,E1 (synthetic),2000,32,1,1.0,,0.9403973509933776,
+sin_homo,"E1 (synthetic, sigma_o learned)",2000,1,3,1.0,0.0,1.0,0.0
+sin_homo,"E1 (synthetic, sigma_o learned)",2000,8,3,0.9833333333333334,0.006666666666666672,0.8962472406181016,0.005840510620451595
+sin_homo,"E1 (synthetic, sigma_o learned)",2000,32,3,0.89,0.020816659994661348,0.6799116997792494,0.01924458694719944

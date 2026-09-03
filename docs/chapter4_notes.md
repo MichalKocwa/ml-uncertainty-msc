@@ -1162,6 +1162,39 @@ tylko `d=1` — mechanizm (porzucone cechy wchłaniane przez estymatę szumu) je
 przy dowolnym wymiarze, tylko proporcjonalnie słabszy, gdy więcej niż jedna cecha
 przeżywa maskę.
 
+**Powtórzone 2026-09-04 i zapisane do pliku** — do tej pory pomiar D15 nie zostawiał
+CSV, więc żadnej z powyższych liczb nie dało się sprawdzić inaczej niż przez zaufanie
+tej notatce. `experiments/input_dropout_ablation.py` → `results/input_dropout_ablation.csv`,
+agregat w `results/summary/input_dropout_ablation.csv`. Trzy seedy (0–2), `tanh`,
+2000 epok, `sin_homo` i `sin_gap`, `mcd`. **Uwaga protokolarna:** `fixed_sigma2`
+*nie* jest stosowane, inaczej niż w E1 — przypięta wariancja nie może się rozdąć,
+więc pod protokołem E1 tego pytania nie da się zadać.
+
+Wyniki na `sin_homo`, średnia ± SE po trzech seedach, w nawiasie wartość z przebiegu
+2026-08-31 powyżej:
+
+| wielkość | z dropoutem wejściowym | bez |
+|---|---|---|
+| `mean_var_aleatoric` (prawda `0,01`) | **0,1027 ± 0,0027** (2026-08-31: 0,106) | **0,0393 ± 0,0014** (0,038) |
+| MPIW@95 w `[0,6]` | 1,583 (1,644) | 0,925 (0,921) |
+| RMSE w `[0,6]` | 0,203 (**0,233 — nie odtwarza się**) | 0,149 (**0,083 — nie odtwarza się**) |
+
+Wariancja i MPIW potwierdzają się. **Para RMSE `0,233→0,083` powyżej się nie
+odtwarza i nie należy jej cytować**, z dwóch niezależnych powodów:
+
+- `0,083` jest **poniżej progu szumu**: przy `σ=0,1` RMSE liczone wobec zaszumionych
+  obserwacji nie może zejść poniżej 0,1. Ta liczba nie mogła powstać z tego pomiaru
+  w tej konwencji. Sprawdzone też wobec czystego `y_eval` — wtedy wychodzi 0,110, też nie 0,083.
+- `0,233` ma najpewniej inne źródło: `results/e5_depth.csv` daje
+  `rmse_extrapolation = 0,2333` dla `map` przy `depth=1` na `sin_homo` — inny
+  eksperyment, inna metoda, obszar ekstrapolacji zamiast `[0,6]`. Ta sama liczba jest
+  cytowana **poprawnie** w docstringu `experiments/depth_exploration.py`.
+
+Stare wartości zostawione powyżej celowo, żeby było widać, co zostało poprawione
+i dlaczego. Na `sin_gap` (nowy w tym przebiegu, D15 go nie mierzył) efekt jest
+silniejszy: `mean_var_aleatoric` 0,1237 ± 0,0026 wobec 0,0440 ± 0,0006, czyli
+12,4× prawdy wobec 4,4×.
+
 **D16. Deep ensembles bez adversarial training.** Autorzy raportują to jako opcjonalne
 wzmocnienie; włączenie dodałoby metodzie składnik nieobecny w pozostałych czterech.
 
